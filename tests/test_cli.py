@@ -38,6 +38,7 @@ class Samples:
 
 CWD = os.path.abspath(os.path.dirname(__file__))
 SAMPLES_DIR = os.path.abspath(os.path.join(CWD, "sample_files"))
+SAMPLES_DIR_SINGLE_FILE = os.path.abspath(os.path.join(CWD, "single_file"))
 SAMPLES_A = Samples(os.path.join(SAMPLES_DIR, "subdir_a"))
 SAMPLES_B = Samples(os.path.join(SAMPLES_DIR, "subdir_b"))
 
@@ -580,3 +581,13 @@ def test_help_smoke(help_flag: str, runner: CliRunner):
     assert run_result.exit_code == 0
     assert isinstance(run_result.stdout, str)
     assert "Measure docstring coverage for" in run_result.stdout
+
+
+@pytest.mark.parametrize(["paths"], [pytest.param([SAMPLES_DIR_SINGLE_FILE])])
+def test_single_py_file(paths: List[str],
+                        runner: CliRunner,):
+
+    run_result = runner.invoke(execute, paths + ["--accept-empty"])
+    print(f"\ntest: {run_result.output}")
+
+    assert "1.00/1.00" in run_result.output
